@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@500&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #050505 0%, #1a1a2e 50%, #0f1a2a 100%);
+      color: #eaeef8;
+      font-family: 'Quicksand', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sparkles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sparkle {
+      position: absolute;
+      color: #5aa7ff;
+      opacity: 0;
+      animation: floatUp 7s linear infinite;
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+      10% { opacity: 0.8; }
+      100% {
+        transform: translateY(-15vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: min(90vw, 700px);
+      text-align: center;
+      background: rgba(18, 18, 28, 0.9);
+      border: 2px solid #4a90e2;
+      border-radius: 24px;
+      padding: 40px 30px;
+      box-shadow: 0 0 35px rgba(74, 144, 226, 0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      color: white;
+      text-shadow: 0 0 18px rgba(74, 144, 226, 0.9);
+    }
+
+    .cat {
+      font-size: clamp(3rem, 8vw, 5rem);
+      margin: 20px 0 10px;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(74, 144, 226, 0.8));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .small-text {
+      font-size: 1.1rem;
+      color: #dfeaff;
+      margin-bottom: 20px;
+    }
+
+    .code-input {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .code-input input {
+      width: min(220px, 70vw);
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 2px solid #4a90e2;
+      background: #08090d;
+      color: white;
+      text-align: center;
+      font-size: 1.15rem;
+      outline: none;
+    }
+
+    .code-input button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #1a1a2e, #4a90e2);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .code-input button:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 20px rgba(74, 144, 226, 0.45);
+    }
+
+    #mainScreen {
+      display: none;
+    }
+
+    .icons {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .icon {
+      width: 76px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      background: rgba(26, 26, 32, 0.9);
+      border: 2px solid #4a90e2;
+      font-size: 2.6rem;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .icon:hover {
+      transform: scale(1.08) rotate(3deg);
+      box-shadow: 0 0 25px rgba(74, 144, 226, 0.6);
+    }
+
+    .cute-cat {
+      position: absolute;
+      right: 16px;
+      bottom: 10px;
+      font-size: 3.2rem;
+      display: none;
+      animation: bounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(74, 144, 226, 0.8));
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-12px) rotate(-4deg); }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      position: relative;
+      width: min(90vw, 720px);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: rgba(10, 10, 14, 0.98);
+      border: 2px solid #4a90e2;
+      border-radius: 22px;
+      padding: 28px 22px 18px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(74, 144, 226, 0.35);
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 2rem;
+      color: #4a90e2;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .guitar-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .guitar-item {
+      width: 150px;
+      height: 150px;
+      border-radius: 18px;
+      border: 2px solid #4a90e2;
+      background: linear-gradient(135deg, #17171b, #2b2b3d);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 3.2rem;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .guitar-item:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 25px rgba(74, 144, 226, 0.5);
+    }
+
+    .guitar-label {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #a7c5ff;
+    }
+
+    .message {
+      min-height: 40px;
+      margin: 20px 0 8px;
+      font-family: 'Playfair Display', serif;
+      color: #7ab5ff;
+      font-size: 1.5rem;
+      text-shadow: 0 0 18px rgba(74, 144, 226, 0.65);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .letter {
+      margin: 0 auto;
+      max-width: 540px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      line-height: 1.8;
+      color: #efeff5;
+    }
+
+    .music-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .music-list button {
+      width: 100%;
+      padding: 14px 12px;
+      border: 1px solid #4a90e2;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #1a1a1a, #2a2a3a);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .music-list button:hover {
+      transform: scale(1.01);
+      background: linear-gradient(45deg, #4a90e2, #1a1a2e);
+    }
+
+    iframe {
+      width: 100%;
+      height: 220px;
+      border: 0;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sparkles" id="sparkles"></div>
+
+  <div class="container" id="lockScreen">
+    <h1>Happy Birthday</h1>
+    <div class="cat">🐈</div>
+    <p class="small-text">Enter code: 100208</p>
+
+    <div class="code-input">
+      <input type="text" id="code" maxlength="6" placeholder="Enter 100208" />
+      <button onclick="checkCode()">Enter</button>
+    </div>
+  </div>
+
+  <div class="container" id="mainScreen">
+    <h1>Happy Birthday</h1>
+
+    <div class="icons">
+      <div class="icon" onclick="openModal('cake')">🎂</div>
+      <div class="icon" onclick="openModal('music')">🎵</div>
+      <div class="icon" onclick="openModal('letter')">💌</div>
+    </div>
+
+    <div class="cute-cat" id="cuteCat">🐈‍⬛</div>
+  </div>
+
+  <div class="modal" id="cakeModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('cakeModal')">&times;</span>
+      <h2>Click a Guitar</h2>
+
+      <div class="guitar-gallery">
+        <div class="guitar-item" onclick="showMessage('I love you bro 💙', 'ZYBWv4vCZKI')">
+          🎸
+          <div class="guitar-label">Red Guitar</div>
+        </div>
+
+        <div class="guitar-item" onclick="showMessage('You are a special person ✨', 'u7XjPmN-tHw')">
+          🎸
+          <div class="guitar-label">Black Guitar</div>
+        </div>
+
+        <div class="guitar-item" onclick="showMessage('Wish you the best always 🌟', '75-Com9Bo_s')">
+          🎸
+          <div class="guitar-label">Acoustic</div>
+        </div>
+      </div>
+
+      <div class="message" id="guitarMessage"></div>
+      <div id="guitarPlayer"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="musicModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('musicModal')">&times;</span>
+      <h2>Pick a Song</h2>
+
+      <div class="music-list">
+        <button onclick="playYoutube('IpFX2vq8HKw', 'mainPlayer')">Blue - Yung Kai</button>
+        <button onclick="playYoutube('Kpg-OVlruxU', 'mainPlayer')">Bad - Blue to Earth</button>
+      </div>
+
+      <div id="mainPlayer"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="letterModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('letterModal')">&times;</span>
+      <h2>For You</h2>
+      <div class="letter">
+        Happy 18th Birthday bro!<br><br>
+        You're officially an adult now, but you'll always be my favorite vintage soul.
+        Thank you for all the music, memories, and magic.
+        Hope your day is as cool and awesome as you are.<br><br>
+        Proud of you 💙
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const correctCode = "100208";
+
+    function createSparkles() {
+      const sparkleContainer = document.getElementById('sparkles');
+
+      setInterval(() => {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = '✨';
+        sparkle.style.left = Math.random() * 100 + 'vw';
+        sparkle.style.fontSize = (Math.random() * 8 + 12) + 'px';
+        sparkle.style.animationDuration = (Math.random() * 3 + 5) + 's';
+
+        sparkleContainer.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 8000);
+      }, 420);
+    }
+
+    createSparkles();
+
+    function checkCode() {
+      const input = document.getElementById('code').value.trim();
+
+      if (input === correctCode) {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('mainScreen').style.display = 'block';
+        document.getElementById('cuteCat').style.display = 'block';
+      } else {
+        alert('Wrong code! Hint: 100208');
+      }
+    }
+
+    function openModal(type) {
+      document.getElementById(type + 'Modal').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+      document.getElementById('mainPlayer').innerHTML = '';
+      document.getElementById('guitarPlayer').innerHTML = '';
+    }
+
+    function playYoutube(videoId, target) {
+      document.getElementById(target).innerHTML = `
+        <iframe
+          src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+        ></iframe>
+      `;
+    }
+
+    function showMessage(text, songId) {
+      document.getElementById('guitarMessage').innerText = text;
+      playYoutube(songId, 'guitarPlayer');
+    }
+
+    document.getElementById('code').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        checkCode();
+      }
+    });
+  </script>
+</body>
+</html>
